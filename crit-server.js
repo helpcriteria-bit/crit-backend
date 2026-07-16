@@ -9,8 +9,16 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 // Middleware
+// NOTE: CORS_ORIGIN in .env is a comma-separated string (see .env.example).
+// It must be split into an array — passing the raw string to `cors()` makes
+// it compare the Origin header against the WHOLE string, so a list like
+// "https://a.com,https://b.com" would never match either site.
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(o => o.trim())
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || ['http://localhost:5173', 'http://localhost:3000'],
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json());
